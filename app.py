@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 from urllib.parse import urlparse, parse_qs
+import os  # Fix: added import for os
 
 app = Flask(__name__)
 
