@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>YouTube Thumbnail Downloader</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(145deg, #181818, #222);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+      font-size: 2rem;
+      color: #ff4444;
+    }
+    input {
+      width: 100%;
+      max-width: 500px;
+      padding: 0.8rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+    }
+    button {
+      padding: 0.8rem 2rem;
+      background: #ff4444;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #cc0000;
+    }
+    .thumbs {
+      margin-top: 2rem;
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      width: 100%;
+      max-width: 1000px;
+    }
+    .thumb {
+      background: #333;
+      padding: 1rem;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .thumb img {
+      max-width: 100%;
+      border-radius: 8px;
+    }
+    .thumb a {
+      display: inline-block;
+      margin-top: 0.5rem;
+      text-decoration: none;
+      color: #00e0ff;
+    }
+  </style>
+</head>
+<body>
+  <h1>YouTube Thumbnail Downloader</h1>
+  <input type="text" id="videoInput" placeholder="Enter YouTube link or video ID" />
+  <button onclick="getThumbnails()">Get Thumbnails</button>
+  <div class="thumbs" id="thumbsContainer"></div>
+
+  <script>
+    function extractVideoID(url) {
+      const regex = /(?:youtu\.be\/|youtube\.com.*(?:\?|&)v=|youtube\.com\/shorts\/)([^&\n?#]+)/;
+      const match = url.match(regex);
+      return match ? match[1] : url;
+    }
+
+    function getThumbnails() {
+      const input = document.getElementById("videoInput").value.trim();
+      const videoID = extractVideoID(input);
+      if (!videoID) {
+        alert("Invalid YouTube URL or ID!");
+        return;
+      }
+
+      const resolutions = [
+        { name: "Max Resolution", key: "maxresdefault" },
+        { name: "Standard Quality", key: "sddefault" },
+        { name: "High Quality", key: "hqdefault" },
+        { name: "Medium Quality", key: "mqdefault" },
+        { name: "Low Quality", key: "default" },
+      ];
+
+      const container = document.getElementById("thumbsContainer");
+      container.innerHTML = "";
+      resolutions.forEach(res => {
+        const url = `https://img.youtube.com/vi/${videoID}/${res.key}.jpg`;
+        const div = document.createElement("div");
+        div.className = "thumb";
+        div.innerHTML = `
+          <h3>${res.name}</h3>
+          <img src="${url}" alt="${res.name}">
+          <br>
+          <a href="${url}" download target="_blank">Download</a>
+        `;
+        container.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
