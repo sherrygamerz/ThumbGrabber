@@ -3,8 +3,6 @@ import requests
 import zipfile
 import io
 import re
-import tempfile
-import subprocess
 from flask import Flask, render_template, request, send_file, redirect, url_for, jsonify
 from urllib.parse import urlparse, parse_qs
 
@@ -71,56 +69,6 @@ def check_thumbnail_availability(video_id):
     # Return the best available quality or None if none are available
     return available_thumbnails[0] if available_thumbnails else None
 
-def parse_timestamp(timestamp):
-    """Convert a timestamp string (like '1:30') to seconds."""
-    parts = timestamp.split(':')
-    if len(parts) == 3:  # HH:MM:SS
-        return int(parts[0]) * 3600 + int(parts[1]) * 60 + int(parts[2])
-    elif len(parts) == 2:  # MM:SS
-        return int(parts[0]) * 60 + int(parts[1])
-    else:  # SS
-        return int(parts[0])
-
-def extract_frame(video_id, seconds):
-    """Extract a frame from a YouTube video at the specified timestamp."""
-    # Create a temporary directory
-    with tempfile.TemporaryDirectory() as temp_dir:
-        # Define output paths
-        video_url = f"https://www.youtube.com/watch?v={video_id}"
-        output_path = os.path.join(temp_dir, f"{video_id}.mp4")
-        frame_path = os.path.join(temp_dir, f"{video_id}_frame.jpg")
-        
-        try:
-            # Download just a small segment around the desired timestamp
-            start_time = max(0, seconds - 5)
-            subprocess.run([
-                'yt-dlp',  # Using yt-dlp instead of youtube-dl
-                '-f', 'best[height<=720]',
-                '--external-downloader', 'ffmpeg',
-                '--external-downloader-args', f'ffmpeg_i:-ss {start_time} -t 10',
-                '-o', output_path,
-                video_url
-            ], check=True)
-            
-            # Extract the exact frame
-            frame_time = seconds - start_time
-            subprocess.run([
-                'ffmpeg',
-                '-i', output_path,
-                '-ss', str(frame_time),
-                '-frames:v', '1',
-                '-q:v', '2',  # High quality
-                frame_path
-            ], check=True)
-            
-            # Read the frame data
-            with open(frame_path, 'rb') as f:
-                frame_data = f.read()
-                
-            return frame_data
-        except subprocess.CalledProcessError as e:
-            raise Exception(f"Error extracting frame: {str(e)}")
-
 @app.route('/', methods=['GET', 'POST'])
 def index():
     thumbnail_data = []
@@ -185,69 +133,57 @@ def download_all_zip():
 def extract_frame_page(video_id):
     title = get_video_title(video_id)
     duration = get_video_duration(video_id)
-    return render_template('extract_frame.html', video_id=video_id, title=title, duration=duration)
+    return render_template('extract_frame_simple.html', video_id=video_id, title=title, duration=duration)
 
-@app.route('/api/extract-frame', methods=['POST'])
-def extract_frame_api():
-    video_id = request.form.get('video_id')
-    timestamp = request.form.get('timestamp')
-    
-    if not video_id or not timestamp:
-        return jsonify({'error': 'Missing video_id or timestamp'}), 400
-    
+@app.route('/api/video-frames/<video_id>', methods=['GET'])
+def get_video_frames(video_id):
+    """Get all available frames for a video using YouTube's thumbnail system"""
     try:
-        # Convert timestamp to seconds
-        seconds = parse_timestamp(timestamp)
-        
-        # Extract frame
-        frame_data = extract_frame(video_id, seconds)
-        
-        # Return the image
-        return send_file(
-            io.BytesIO(frame_data),
-            mimetype='image/jpeg',
-            as_attachment=True,
-            download_name=f"{video_id}_frame_{timestamp.replace(':', '-')}.jpg"
-        )
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/api/storyboard-frames/<video_id>', methods=['GET'])
-def get_storyboard_frames(video_id):
-    # This function gets frames from YouTube's storyboard thumbnails
-    # These are the preview images you see when hovering over the video progress bar
-    
-    try:
-        # Get video info to find storyboard URL
-        video_url = f"https://www.youtube.com/watch?v={video_id}"
-        response = requests.get(video_url)
-        
-        if response.status_code != 200:
-            return jsonify({"error": "Could not fetch video info"}), 400
-            
-        # Extract storyboard frames at different points in the video
         frames = []
         
-        # Use standard thumbnail with different parameters
-        # i=1 is at 25%, i=2 is at 50%, i=3 is at 75%
-        for i in range(1, 4):
+        # Standard thumbnails (0.jpg, 1.jpg, 2.jpg, 3.jpg)
+        # These represent different points in the video
+        for i in range(4):
             frame_url = f"https://img.youtube.com/vi/{video_id}/{i}.jpg"
-            frames.append({
-                "url": frame_url,
-                "position": i * 25  # Percentage through the video
-            })
-            
-        # Also add standard thumbnails
-        qualities = ["maxresdefault", "sddefault", "hqdefault", "mqdefault", "default"]
-        for quality in qualities:
-            frame_url = f"https://img.youtube.com/vi/{video_id}/{quality}.jpg"
-            # Check if this thumbnail exists
+            response = requests.head(frame_url)
+            if response.status_code == 200 and int(response.headers.get('content-length', 0)) > 1000:
+                position = "Default" if i == 0 else f"{i * 25}% through video"
+                frames.append({
+                    "url": frame_url,
+                    "position": position,
+                    "index": i
+                })
+        
+        # Add hqdefault thumbnails with different start times
+        # These are the thumbnails shown in the YouTube player timeline
+        for i in range(1, 4):
+            frame_url = f"https://img.youtube.com/vi/{video_id}/hqdefault_{i}.jpg"
             response = requests.head(frame_url)
             if response.status_code == 200 and int(response.headers.get('content-length', 0)) > 1000:
                 frames.append({
                     "url": frame_url,
-                    "position": 0,  # Default thumbnail
-                    "quality": quality
+                    "position": f"Timeline preview {i}",
+                    "index": i + 10  # Offset to avoid conflicts
+                })
+        
+        # Add different quality versions of the default thumbnail
+        qualities = [
+            {"quality": "maxresdefault", "label": "Maximum Resolution"},
+            {"quality": "sddefault", "label": "Standard Definition"},
+            {"quality": "hqdefault", "label": "High Quality"},
+            {"quality": "mqdefault", "label": "Medium Quality"},
+            {"quality": "default", "label": "Default Quality"}
+        ]
+        
+        for quality in qualities:
+            frame_url = f"https://img.youtube.com/vi/{video_id}/{quality['quality']}.jpg"
+            response = requests.head(frame_url)
+            if response.status_code == 200 and int(response.headers.get('content-length', 0)) > 1000:
+                frames.append({
+                    "url": frame_url,
+                    "position": f"Default ({quality['label']})",
+                    "quality": quality['quality'],
+                    "index": 100  # Group these together
                 })
         
         return jsonify({"frames": frames})
