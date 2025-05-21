@@ -93,7 +93,7 @@
             margin-bottom: 20px;
         }
         
-        .frame-extractor {
+        .frames-section {
             background-color: white;
             padding: 30px;
             border-radius: var(--border-radius);
@@ -101,113 +101,61 @@
             margin-bottom: 30px;
         }
         
-        .timestamp-form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        @media (min-width: 768px) {
-            .timestamp-form {
-                flex-direction: row;
-                align-items: center;
-            }
-        }
-        
-        .timestamp-input {
-            flex: 1;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-        
-        .timestamp-input:focus {
-            border-color: var(--primary-color);
-            outline: none;
-        }
-        
-        .extract-btn {
-            padding: 15px 25px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: bold;
-            transition: background-color 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        
-        .extract-btn:hover {
-            background-color: #cc0000;
-        }
-        
-        .timestamp-controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
+        .frames-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
             margin-top: 20px;
         }
         
-        .timestamp-btn {
+        .frame-card {
+            border: 1px solid #eee;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+        
+        .frame-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .frame-img-container {
+            position: relative;
+            width: 100%;
+            height: 150px;
+            overflow: hidden;
+        }
+        
+        .frame-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .frame-info {
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .frame-position {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .download-frame-btn {
             padding: 8px 15px;
-            background-color: var(--secondary-color);
+            background-color: var(--primary-color);
             color: white;
             border: none;
             border-radius: var(--border-radius);
             cursor: pointer;
             font-size: 0.9rem;
             transition: background-color 0.3s;
-        }
-        
-        .timestamp-btn:hover {
-            background-color: #1a1a1a;
-        }
-        
-        .preview-section {
-            margin-top: 30px;
-            display: none;
-        }
-        
-        .preview-section.active {
-            display: block;
-        }
-        
-        .frame-preview {
-            background-color: white;
-            padding: 20px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            text-align: center;
-        }
-        
-        .frame-preview img {
-            max-width: 100%;
-            max-height: 500px;
-            border-radius: var(--border-radius);
-            margin-bottom: 20px;
-        }
-        
-        .download-frame-btn {
-            padding: 12px 25px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: bold;
-            transition: background-color 0.3s;
+            text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            text-decoration: none;
+            gap: 5px;
         }
         
         .download-frame-btn:hover {
@@ -215,13 +163,8 @@
         }
         
         .loading {
-            display: none;
             text-align: center;
             padding: 20px;
-        }
-        
-        .loading.active {
-            display: block;
         }
         
         .spinner {
@@ -251,21 +194,6 @@
             display: block;
         }
         
-        .time-slider-container {
-            margin-top: 20px;
-        }
-        
-        .time-slider {
-            width: 100%;
-            margin-bottom: 10px;
-        }
-        
-        .current-time {
-            text-align: center;
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-        
         footer {
             text-align: center;
             margin-top: 50px;
@@ -273,13 +201,28 @@
             color: #666;
             font-size: 0.9rem;
         }
+        
+        .no-frames {
+            text-align: center;
+            padding: 30px;
+            background-color: #f8f8f8;
+            border-radius: var(--border-radius);
+            margin-top: 20px;
+        }
+        
+        .feature-explanation {
+            background-color: #f8f8f8;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1><i class="fab fa-youtube youtube-icon"></i>Frame Extractor</h1>
-            <p>Extract any frame from a YouTube video to use as a thumbnail</p>
+            <p>Extract frames from a YouTube video to use as a thumbnail</p>
         </header>
         
         <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back to Thumbnail Downloader</a>
@@ -289,280 +232,97 @@
                 <h2 class="video-title">{{ title }}</h2>
                 <iframe 
                     class="video-player" 
-                    src="https://www.youtube.com/embed/{{ video_id }}?enablejsapi=1" 
+                    src="https://www.youtube.com/embed/{{ video_id }}" 
                     frameborder="0" 
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                     allowfullscreen
-                    id="youtube-player"
                 ></iframe>
             </section>
             
-            <section class="frame-extractor">
-                <h2>Extract a Frame</h2>
-                <p>Enter a timestamp or use the controls below to extract a frame from the video.</p>
+            <section class="frames-section">
+                <h2>Available Frames</h2>
                 
-                <form class="timestamp-form" id="timestamp-form">
-                    <input 
-                        type="text" 
-                        id="timestamp-input" 
-                        class="timestamp-input" 
-                        placeholder="Enter timestamp (e.g., 1:30)" 
-                        required
-                    >
-                    <input type="hidden" id="video-id" value="{{ video_id }}">
-                    <button type="submit" class="extract-btn">
-                        <i class="fas fa-cut"></i> Extract Frame
-                    </button>
-                </form>
-                
-                <div class="time-slider-container">
-                    <input 
-                        type="range" 
-                        id="time-slider" 
-                        class="time-slider" 
-                        min="0" 
-                        max="{{ duration }}" 
-                        value="0" 
-                        step="1"
-                    >
-                    <div class="current-time" id="current-time">0:00</div>
-                </div>
-                
-                <div class="timestamp-controls">
-                    <button class="timestamp-btn" data-action="play-pause">
-                        <i class="fas fa-play"></i> Play/Pause
-                    </button>
-                    <button class="timestamp-btn" data-action="back-5">
-                        <i class="fas fa-backward"></i> -5s
-                    </button>
-                    <button class="timestamp-btn" data-action="forward-5">
-                        <i class="fas fa-forward"></i> +5s
-                    </button>
-                    <button class="timestamp-btn" data-action="capture">
-                        <i class="fas fa-camera"></i> Capture Current Frame
-                    </button>
-                    <button class="timestamp-btn" data-action="25-percent">
-                        25%
-                    </button>
-                    <button class="timestamp-btn" data-action="50-percent">
-                        50%
-                    </button>
-                    <button class="timestamp-btn" data-action="75-percent">
-                        75%
-                    </button>
+                <div class="feature-explanation">
+                    <p><strong>How this works:</strong> YouTube automatically generates several thumbnail images for each video. This tool finds all available frames and lets you download them. These include the default thumbnail, frames from different points in the video, and various quality options.</p>
                 </div>
                 
                 <div class="loading" id="loading">
                     <div class="spinner"></div>
-                    <p>Extracting frame... This may take a few moments.</p>
+                    <p>Loading available frames...</p>
                 </div>
                 
                 <div class="error-message" id="error-message"></div>
-            </section>
-            
-            <section class="preview-section" id="preview-section">
-                <div class="frame-preview">
-                    <h2>Extracted Frame</h2>
-                    <img id="frame-preview-img" src="/placeholder.svg" alt="Extracted frame">
-                    <a href="#" class="download-frame-btn" id="download-frame-btn">
-                        <i class="fas fa-download"></i> Download Frame
-                    </a>
+                
+                <div class="frames-grid" id="frames-grid"></div>
+                
+                <div class="no-frames" id="no-frames" style="display: none;">
+                    <i class="fas fa-exclamation-circle" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 10px;"></i>
+                    <h3>No additional frames available</h3>
+                    <p>YouTube only provides limited frames for this video. Try using the standard thumbnail downloader instead.</p>
                 </div>
             </section>
         </main>
         
         <footer>
-            <p>© 2023 YouTube Thumbnail Downloader | Extract any frame from YouTube videos</p>
+            <p>© 2023 YouTube Thumbnail Downloader | Extract frames from YouTube videos</p>
         </footer>
     </div>
     
-    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        let player;
-        let playerReady = false;
-        
-        // Initialize YouTube player
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('youtube-player', {
-                events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
-                }
-            });
-        }
-        
-        function onPlayerReady(event) {
-            playerReady = true;
-            
-            // Update time slider as video plays
-            setInterval(function() {
-                if (player && player.getCurrentTime) {
-                    const currentTime = player.getCurrentTime();
-                    document.getElementById('time-slider').value = currentTime;
-                    document.getElementById('current-time').textContent = formatTime(currentTime);
-                }
-            }, 500);
-        }
-        
-        function onPlayerStateChange(event) {
-            // Update play/pause button based on player state
-            const playPauseBtn = document.querySelector('[data-action="play-pause"] i');
-            if (event.data === YT.PlayerState.PLAYING) {
-                playPauseBtn.className = 'fas fa-pause';
-            } else {
-                playPauseBtn.className = 'fas fa-play';
-            }
-        }
-        
-        // Format seconds to MM:SS or HH:MM:SS
-        function formatTime(seconds) {
-            seconds = Math.floor(seconds);
-            const h = Math.floor(seconds / 3600);
-            const m = Math.floor((seconds % 3600) / 60);
-            const s = seconds % 60;
-            
-            if (h > 0) {
-                return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-            } else {
-                return `${m}:${s.toString().padStart(2, '0')}`;
-            }
-        }
-        
-        // Parse timestamp string to seconds
-        function parseTimestamp(timestamp) {
-            const parts = timestamp.split(':').map(Number);
-            if (parts.length === 3) {
-                return parts[0] * 3600 + parts[1] * 60 + parts[2];
-            } else if (parts.length === 2) {
-                return parts[0] * 60 + parts[1];
-            } else {
-                return parts[0];
-            }
-        }
-        
         document.addEventListener('DOMContentLoaded', function() {
-            const timestampForm = document.getElementById('timestamp-form');
-            const timestampInput = document.getElementById('timestamp-input');
-            const videoId = document.getElementById('video-id').value;
-            const timeSlider = document.getElementById('time-slider');
+            const videoId = '{{ video_id }}';
+            const framesGrid = document.getElementById('frames-grid');
             const loading = document.getElementById('loading');
             const errorMessage = document.getElementById('error-message');
-            const previewSection = document.getElementById('preview-section');
-            const framePreviewImg = document.getElementById('frame-preview-img');
-            const downloadFrameBtn = document.getElementById('download-frame-btn');
+            const noFrames = document.getElementById('no-frames');
             
-            // Handle timestamp form submission
-            timestampForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const timestamp = timestampInput.value.trim();
-                if (!timestamp) return;
-                
-                extractFrame(timestamp);
-            });
-            
-            // Handle time slider change
-            timeSlider.addEventListener('input', function() {
-                const time = parseFloat(this.value);
-                if (playerReady) {
-                    player.seekTo(time, true);
-                }
-                document.getElementById('current-time').textContent = formatTime(time);
-            });
-            
-            // Handle control buttons
-            document.querySelectorAll('.timestamp-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const action = this.getAttribute('data-action');
-                    
-                    if (!playerReady) return;
-                    
-                    switch (action) {
-                        case 'play-pause':
-                            if (player.getPlayerState() === YT.PlayerState.PLAYING) {
-                                player.pauseVideo();
-                            } else {
-                                player.playVideo();
-                            }
-                            break;
-                        case 'back-5':
-                            player.seekTo(Math.max(0, player.getCurrentTime() - 5), true);
-                            break;
-                        case 'forward-5':
-                            player.seekTo(player.getCurrentTime() + 5, true);
-                            break;
-                        case 'capture':
-                            const currentTime = player.getCurrentTime();
-                            timestampInput.value = formatTime(currentTime);
-                            extractFrame(formatTime(currentTime));
-                            break;
-                        case '25-percent':
-                            const duration25 = player.getDuration() * 0.25;
-                            player.seekTo(duration25, true);
-                            break;
-                        case '50-percent':
-                            const duration50 = player.getDuration() * 0.5;
-                            player.seekTo(duration50, true);
-                            break;
-                        case '75-percent':
-                            const duration75 = player.getDuration() * 0.75;
-                            player.seekTo(duration75, true);
-                            break;
-                    }
-                });
-            });
-            
-            // Extract frame function
-            function extractFrame(timestamp) {
-                // Show loading, hide error and preview
-                loading.classList.add('active');
-                errorMessage.classList.remove('active');
-                previewSection.classList.remove('active');
-                
-                // Create form data
-                const formData = new FormData();
-                formData.append('video_id', videoId);
-                formData.append('timestamp', timestamp);
-                
-                // Send request to extract frame
-                fetch('/api/extract-frame', {
-                    method: 'POST',
-                    body: formData
-                })
+            // Fetch available frames
+            fetch(`/api/video-frames/${videoId}`)
                 .then(response => {
                     if (!response.ok) {
-                        return response.json().then(data => {
-                            throw new Error(data.error || 'Failed to extract frame');
-                        });
+                        throw new Error('Failed to fetch frames');
                     }
-                    return response.blob();
+                    return response.json();
                 })
-                .then(blob => {
-                    // Create object URL for the blob
-                    const url = URL.createObjectURL(blob);
-                    
-                    // Update preview image
-                    framePreviewImg.src = url;
-                    
-                    // Update download link
-                    downloadFrameBtn.href = url;
-                    downloadFrameBtn.download = `frame_${videoId}_${timestamp.replace(/:/g, '-')}.jpg`;
-                    
-                    // Show preview section
-                    previewSection.classList.add('active');
-                    
+                .then(data => {
                     // Hide loading
-                    loading.classList.remove('active');
+                    loading.style.display = 'none';
+                    
+                    // Display frames
+                    if (data.frames && data.frames.length > 0) {
+                        // Sort frames by index
+                        data.frames.sort((a, b) => (a.index || 0) - (b.index || 0));
+                        
+                        data.frames.forEach(frame => {
+                            const frameCard = document.createElement('div');
+                            frameCard.className = 'frame-card';
+                            
+                            frameCard.innerHTML = `
+                                <div class="frame-img-container">
+                                    <img src="${frame.url}" alt="Frame at ${frame.position}" class="frame-img">
+                                </div>
+                                <div class="frame-info">
+                                    <div class="frame-position">${frame.position}</div>
+                                    <a href="${frame.url}" download="frame_${videoId}_${frame.quality || frame.index || 'custom'}.jpg" class="download-frame-btn">
+                                        <i class="fas fa-download"></i> Download
+                                    </a>
+                                </div>
+                            `;
+                            
+                            framesGrid.appendChild(frameCard);
+                        });
+                    } else {
+                        noFrames.style.display = 'block';
+                    }
                 })
                 .catch(error => {
-                    // Show error message
+                    // Hide loading
+                    loading.style.display = 'none';
+                    
+                    // Show error
                     errorMessage.textContent = error.message;
                     errorMessage.classList.add('active');
-                    
-                    // Hide loading
-                    loading.classList.remove('active');
                 });
-            }
         });
     </script>
 </body>
