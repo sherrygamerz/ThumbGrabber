@@ -6,7 +6,7 @@ from flask import Flask, render_template, request, send_file
 from urllib.parse import urlparse, parse_qs
 
 app = Flask(__name__)
-YOUTUBE_API_KEY = 'YOUR_API_KEY_HERE'  # ← Replace with your actual API key
+YOUTUBE_API_KEY = 'AIzaSyCQ5xO5gcQ5BT9OuRaZQnD96jso6LZ7rrw'  # ← Replace with your actual API key
 
 def extract_video_id(url):
     parsed_url = urlparse(url)
