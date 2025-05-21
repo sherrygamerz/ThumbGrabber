@@ -125,17 +125,45 @@
             overflow: hidden;
             box-shadow: var(--box-shadow);
             transition: transform 0.3s;
+            position: relative;
         }
         
         .thumbnail-card:hover {
             transform: translateY(-5px);
         }
         
-        .thumbnail-img {
+        .thumbnail-img-container {
+            position: relative;
             width: 100%;
             height: 180px;
-            object-fit: cover;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             border-bottom: 1px solid #eee;
+        }
+        
+        .thumbnail-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .thumbnail-placeholder {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            color: #888;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .thumbnail-placeholder i {
+            font-size: 2rem;
+            margin-bottom: 10px;
         }
         
         .thumbnail-info {
@@ -254,6 +282,18 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        .quality-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            z-index: 10;
+        }
     </style>
 </head>
 <body>
@@ -290,7 +330,20 @@
                             {% for thumbnail in thumbnails %}
                                 <div class="thumbnail-card">
                                     {% if thumbnail.url %}
-                                        <img src="{{ thumbnail.url }}" alt="{{ thumbnail.title }}" class="thumbnail-img">
+                                        <div class="thumbnail-img-container">
+                                            <img 
+                                                src="{{ thumbnail.url }}" 
+                                                alt="{{ thumbnail.title }}" 
+                                                class="thumbnail-img"
+                                                data-video-id="{{ thumbnail.id }}"
+                                                onerror="handleImageError(this)"
+                                            >
+                                            <div class="thumbnail-placeholder">
+                                                <i class="fas fa-image"></i>
+                                                <p>Thumbnail not available</p>
+                                            </div>
+                                            <span class="quality-badge">HD</span>
+                                        </div>
                                         <div class="thumbnail-info">
                                             <h3 class="thumbnail-title">{{ thumbnail.title }}</h3>
                                             <div class="thumbnail-actions">
@@ -372,6 +425,61 @@
                 });
             }
         });
+        
+        // Handle image loading errors by trying different thumbnail qualities
+        function handleImageError(img) {
+            const videoId = img.getAttribute('data-video-id');
+            const qualityBadge = img.parentElement.querySelector('.quality-badge');
+            const placeholder = img.parentElement.querySelector('.thumbnail-placeholder');
+            
+            // Try different thumbnail qualities in order
+            const qualities = [
+                { url: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`, label: 'HQ' },
+                { url: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`, label: 'MQ' },
+                { url: `https://img.youtube.com/vi/${videoId}/sddefault.jpg`, label: 'SD' },
+                { url: `https://img.youtube.com/vi/${videoId}/default.jpg`, label: 'Low' }
+            ];
+            
+            // Current quality index (maxresdefault.jpg failed, so start with hqdefault.jpg)
+            let qualityIndex = 0;
+            
+            function tryNextQuality() {
+                if (qualityIndex < qualities.length) {
+                    const quality = qualities[qualityIndex];
+                    img.src = quality.url;
+                    if (qualityBadge) {
+                        qualityBadge.textContent = quality.label;
+                    }
+                    qualityIndex++;
+                } else {
+                    // All qualities failed, show placeholder
+                    img.style.display = 'none';
+                    if (placeholder) {
+                        placeholder.style.display = 'flex';
+                    }
+                    if (qualityBadge) {
+                        qualityBadge.style.display = 'none';
+                    }
+                    
+                    // Update download links to use the last attempted quality
+                    const downloadLinks = document.querySelectorAll(`a[href="/download/${videoId}"]`);
+                    downloadLinks.forEach(link => {
+                        // Disable the download button if no thumbnail is available
+                        link.classList.add('disabled');
+                        link.style.opacity = '0.6';
+                        link.style.cursor = 'not-allowed';
+                        link.innerHTML = '<i class="fas fa-exclamation-circle"></i> Not Available';
+                        link.onclick = function(e) { e.preventDefault(); };
+                    });
+                }
+            }
+            
+            // Try the next quality
+            tryNextQuality();
+            
+            // Set up error handler for the next quality
+            img.onerror = tryNextQuality;
+        }
     </script>
 </body>
 </html>
