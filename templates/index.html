@@ -46,6 +46,9 @@
         header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         header p {
@@ -56,6 +59,7 @@
         .youtube-icon {
             color: var(--primary-color);
             margin-right: 10px;
+            font-size: 2.5rem;
         }
         
         .input-section {
@@ -102,6 +106,10 @@
             font-size: 1rem;
             font-weight: bold;
             transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         
         .submit-btn:hover {
@@ -141,6 +149,7 @@
             align-items: center;
             justify-content: center;
             border-bottom: 1px solid #eee;
+            overflow: hidden;
         }
         
         .thumbnail-img {
@@ -150,7 +159,7 @@
         }
         
         .thumbnail-placeholder {
-            display: none;
+            display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -335,19 +344,15 @@
                                                 src="{{ thumbnail.url }}" 
                                                 alt="{{ thumbnail.title }}" 
                                                 class="thumbnail-img"
-                                                data-video-id="{{ thumbnail.id }}"
-                                                onerror="handleImageError(this)"
                                             >
-                                            <div class="thumbnail-placeholder">
-                                                <i class="fas fa-image"></i>
-                                                <p>Thumbnail not available</p>
-                                            </div>
-                                            <span class="quality-badge">HD</span>
+                                            {% if thumbnail.label %}
+                                                <span class="quality-badge">{{ thumbnail.label }}</span>
+                                            {% endif %}
                                         </div>
                                         <div class="thumbnail-info">
                                             <h3 class="thumbnail-title">{{ thumbnail.title }}</h3>
                                             <div class="thumbnail-actions">
-                                                <a href="/download/{{ thumbnail.id }}" class="download-btn">
+                                                <a href="/download/{{ thumbnail.id }}/{{ thumbnail.quality }}" class="download-btn">
                                                     <i class="fas fa-download"></i> Download
                                                 </a>
                                                 <input 
@@ -356,18 +361,29 @@
                                                     value="{{ thumbnail.id }}" 
                                                     class="select-thumbnail"
                                                 >
+                                                <input 
+                                                    type="hidden" 
+                                                    name="qualities[]" 
+                                                    value="{{ thumbnail.quality }}"
+                                                >
                                             </div>
                                         </div>
                                     {% else %}
+                                        <div class="thumbnail-img-container">
+                                            <div class="thumbnail-placeholder">
+                                                <i class="fas fa-image"></i>
+                                                <p>Thumbnail not available</p>
+                                            </div>
+                                        </div>
                                         <div class="thumbnail-info">
-                                            <p class="error-message">{{ thumbnail.title }}</p>
+                                            <h3 class="thumbnail-title">{{ thumbnail.title }}</h3>
                                         </div>
                                     {% endif %}
                                 </div>
                             {% endfor %}
                         </div>
                         
-                        {% if thumbnails|length > 1 %}
+                        {% if thumbnails|length > 1 and thumbnails[0].url %}
                             <div class="batch-download">
                                 <button type="submit" class="batch-download-btn">
                                     <i class="fas fa-file-archive"></i> Download Selected Thumbnails
@@ -425,61 +441,6 @@
                 });
             }
         });
-        
-        // Handle image loading errors by trying different thumbnail qualities
-        function handleImageError(img) {
-            const videoId = img.getAttribute('data-video-id');
-            const qualityBadge = img.parentElement.querySelector('.quality-badge');
-            const placeholder = img.parentElement.querySelector('.thumbnail-placeholder');
-            
-            // Try different thumbnail qualities in order
-            const qualities = [
-                { url: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`, label: 'HQ' },
-                { url: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`, label: 'MQ' },
-                { url: `https://img.youtube.com/vi/${videoId}/sddefault.jpg`, label: 'SD' },
-                { url: `https://img.youtube.com/vi/${videoId}/default.jpg`, label: 'Low' }
-            ];
-            
-            // Current quality index (maxresdefault.jpg failed, so start with hqdefault.jpg)
-            let qualityIndex = 0;
-            
-            function tryNextQuality() {
-                if (qualityIndex < qualities.length) {
-                    const quality = qualities[qualityIndex];
-                    img.src = quality.url;
-                    if (qualityBadge) {
-                        qualityBadge.textContent = quality.label;
-                    }
-                    qualityIndex++;
-                } else {
-                    // All qualities failed, show placeholder
-                    img.style.display = 'none';
-                    if (placeholder) {
-                        placeholder.style.display = 'flex';
-                    }
-                    if (qualityBadge) {
-                        qualityBadge.style.display = 'none';
-                    }
-                    
-                    // Update download links to use the last attempted quality
-                    const downloadLinks = document.querySelectorAll(`a[href="/download/${videoId}"]`);
-                    downloadLinks.forEach(link => {
-                        // Disable the download button if no thumbnail is available
-                        link.classList.add('disabled');
-                        link.style.opacity = '0.6';
-                        link.style.cursor = 'not-allowed';
-                        link.innerHTML = '<i class="fas fa-exclamation-circle"></i> Not Available';
-                        link.onclick = function(e) { e.preventDefault(); };
-                    });
-                }
-            }
-            
-            // Try the next quality
-            tryNextQuality();
-            
-            // Set up error handler for the next quality
-            img.onerror = tryNextQuality;
-        }
     </script>
 </body>
 </html>
