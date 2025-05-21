@@ -9,7 +9,7 @@ from flask import Flask, render_template, request, send_file, redirect, url_for,
 from urllib.parse import urlparse, parse_qs
 
 app = Flask(__name__)
-YOUTUBE_API_KEY = 'YOUR_API_KEY_HERE'  # ← Replace with your actual API key
+YOUTUBE_API_KEY = 'AIzaSyCQ5xO5gcQ5BT9OuRaZQnD96jso6LZ7rrw'  # ← Replace with your actual API key
 
 def extract_video_id(url):
     parsed_url = urlparse(url)
@@ -70,6 +70,56 @@ def check_thumbnail_availability(video_id):
     
     # Return the best available quality or None if none are available
     return available_thumbnails[0] if available_thumbnails else None
+
+def parse_timestamp(timestamp):
+    """Convert a timestamp string (like '1:30') to seconds."""
+    parts = timestamp.split(':')
+    if len(parts) == 3:  # HH:MM:SS
+        return int(parts[0]) * 3600 + int(parts[1]) * 60 + int(parts[2])
+    elif len(parts) == 2:  # MM:SS
+        return int(parts[0]) * 60 + int(parts[1])
+    else:  # SS
+        return int(parts[0])
+
+def extract_frame(video_id, seconds):
+    """Extract a frame from a YouTube video at the specified timestamp."""
+    # Create a temporary directory
+    with tempfile.TemporaryDirectory() as temp_dir:
+        # Define output paths
+        video_url = f"https://www.youtube.com/watch?v={video_id}"
+        output_path = os.path.join(temp_dir, f"{video_id}.mp4")
+        frame_path = os.path.join(temp_dir, f"{video_id}_frame.jpg")
+        
+        try:
+            # Download just a small segment around the desired timestamp
+            start_time = max(0, seconds - 5)
+            subprocess.run([
+                'yt-dlp',  # Using yt-dlp instead of youtube-dl
+                '-f', 'best[height<=720]',
+                '--external-downloader', 'ffmpeg',
+                '--external-downloader-args', f'ffmpeg_i:-ss {start_time} -t 10',
+                '-o', output_path,
+                video_url
+            ], check=True)
+            
+            # Extract the exact frame
+            frame_time = seconds - start_time
+            subprocess.run([
+                'ffmpeg',
+                '-i', output_path,
+                '-ss', str(frame_time),
+                '-frames:v', '1',
+                '-q:v', '2',  # High quality
+                frame_path
+            ], check=True)
+            
+            # Read the frame data
+            with open(frame_path, 'rb') as f:
+                frame_data = f.read()
+                
+            return frame_data
+        except subprocess.CalledProcessError as e:
+            raise Exception(f"Error extracting frame: {str(e)}")
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -138,7 +188,7 @@ def extract_frame_page(video_id):
     return render_template('extract_frame.html', video_id=video_id, title=title, duration=duration)
 
 @app.route('/api/extract-frame', methods=['POST'])
-def extract_frame():
+def extract_frame_api():
     video_id = request.form.get('video_id')
     timestamp = request.form.get('timestamp')
     
@@ -147,57 +197,62 @@ def extract_frame():
     
     try:
         # Convert timestamp to seconds
-        time_parts = timestamp.split(':')
-        if len(time_parts) == 3:  # HH:MM:SS
-            seconds = int(time_parts[0]) * 3600 + int(time_parts[1]) * 60 + int(time_parts[2])
-        elif len(time_parts) == 2:  # MM:SS
-            seconds = int(time_parts[0]) * 60 + int(time_parts[1])
-        else:  # SS
-            seconds = int(time_parts[0])
+        seconds = parse_timestamp(timestamp)
         
-        # Create a temporary directory
-        with tempfile.TemporaryDirectory() as temp_dir:
-            # Use youtube-dl to download the video
-            video_url = f"https://www.youtube.com/watch?v={video_id}"
-            output_path = os.path.join(temp_dir, f"{video_id}.mp4")
-            
-            # Download just a small segment around the desired timestamp
-            start_time = max(0, seconds - 5)
-            subprocess.run([
-                'youtube-dl', 
-                '-f', 'best[height<=720]',  # Limit to 720p to save bandwidth
-                '--external-downloader', 'ffmpeg',
-                '--external-downloader-args', f'ffmpeg_i:-ss {start_time} -t 10',  # Download 10 seconds
-                '-o', output_path,
-                video_url
-            ], check=True)
-            
-            # Extract the exact frame using ffmpeg
-            frame_path = os.path.join(temp_dir, f"{video_id}_frame.jpg")
-            relative_timestamp = min(10, seconds - start_time)  # Relative to our clip
-            subprocess.run([
-                'ffmpeg',
-                '-i', output_path,
-                '-ss', str(relative_timestamp),
-                '-frames:v', '1',
-                '-q:v', '2',  # High quality
-                frame_path
-            ], check=True)
-            
-            # Read the frame
-            with open(frame_path, 'rb') as f:
-                frame_data = f.read()
-            
-            # Return the frame
-            return send_file(
-                io.BytesIO(frame_data),
-                mimetype='image/jpeg',
-                as_attachment=True,
-                download_name=f"{video_id}_frame_{timestamp.replace(':', '-')}.jpg"
-            )
-    
+        # Extract frame
+        frame_data = extract_frame(video_id, seconds)
+        
+        # Return the image
+        return send_file(
+            io.BytesIO(frame_data),
+            mimetype='image/jpeg',
+            as_attachment=True,
+            download_name=f"{video_id}_frame_{timestamp.replace(':', '-')}.jpg"
+        )
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/api/storyboard-frames/<video_id>', methods=['GET'])
+def get_storyboard_frames(video_id):
+    # This function gets frames from YouTube's storyboard thumbnails
+    # These are the preview images you see when hovering over the video progress bar
+    
+    try:
+        # Get video info to find storyboard URL
+        video_url = f"https://www.youtube.com/watch?v={video_id}"
+        response = requests.get(video_url)
+        
+        if response.status_code != 200:
+            return jsonify({"error": "Could not fetch video info"}), 400
+            
+        # Extract storyboard frames at different points in the video
+        frames = []
+        
+        # Use standard thumbnail with different parameters
+        # i=1 is at 25%, i=2 is at 50%, i=3 is at 75%
+        for i in range(1, 4):
+            frame_url = f"https://img.youtube.com/vi/{video_id}/{i}.jpg"
+            frames.append({
+                "url": frame_url,
+                "position": i * 25  # Percentage through the video
+            })
+            
+        # Also add standard thumbnails
+        qualities = ["maxresdefault", "sddefault", "hqdefault", "mqdefault", "default"]
+        for quality in qualities:
+            frame_url = f"https://img.youtube.com/vi/{video_id}/{quality}.jpg"
+            # Check if this thumbnail exists
+            response = requests.head(frame_url)
+            if response.status_code == 200 and int(response.headers.get('content-length', 0)) > 1000:
+                frames.append({
+                    "url": frame_url,
+                    "position": 0,  # Default thumbnail
+                    "quality": quality
+                })
+        
+        return jsonify({"frames": frames})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
