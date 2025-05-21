@@ -192,8 +192,10 @@
         
         .thumbnail-actions {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
+            gap: 10px;
         }
         
         .download-btn {
@@ -209,10 +211,21 @@
             display: inline-flex;
             align-items: center;
             gap: 5px;
+            flex: 1;
+            justify-content: center;
+            min-width: 120px;
         }
         
         .download-btn:hover {
             background-color: #cc0000;
+        }
+        
+        .extract-btn {
+            background-color: #4CAF50;
+        }
+        
+        .extract-btn:hover {
+            background-color: #3e8e41;
         }
         
         .select-thumbnail {
@@ -303,6 +316,22 @@
             font-size: 0.8rem;
             z-index: 10;
         }
+        
+        /* Responsive adjustments for mobile */
+        @media (max-width: 480px) {
+            .thumbnail-actions {
+                flex-direction: column;
+            }
+            
+            .download-btn {
+                width: 100%;
+            }
+            
+            .select-thumbnail {
+                align-self: flex-start;
+                margin-top: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -352,9 +381,17 @@
                                         <div class="thumbnail-info">
                                             <h3 class="thumbnail-title">{{ thumbnail.title }}</h3>
                                             <div class="thumbnail-actions">
+                                                <!-- Standard Download Button -->
                                                 <a href="/download/{{ thumbnail.id }}/{{ thumbnail.quality }}" class="download-btn">
                                                     <i class="fas fa-download"></i> Download
                                                 </a>
+                                                
+                                                <!-- NEW EXTRACT FRAME BUTTON -->
+                                                <a href="/extract-frame/{{ thumbnail.id }}" class="download-btn extract-btn">
+                                                    <i class="fas fa-film"></i> Extract Frame
+                                                </a>
+                                                
+                                                <!-- Checkbox for batch download -->
                                                 <input 
                                                     type="checkbox" 
                                                     name="video_ids[]" 
