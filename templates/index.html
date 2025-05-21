@@ -11,19 +11,8 @@
             --secondary-color: #282828;
             --text-color: #333;
             --light-bg: #f9f9f9;
-            --card-bg: #ffffff;
             --border-radius: 8px;
             --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
-        }
-        
-        [data-theme="dark"] {
-            --primary-color: #ff0000;
-            --secondary-color: #1a1a1a;
-            --text-color: #f5f5f5;
-            --light-bg: #121212;
-            --card-bg: #1e1e1e;
-            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         }
         
         * {
@@ -37,7 +26,6 @@
             background-color: var(--light-bg);
             color: var(--text-color);
             line-height: 1.6;
-            transition: var(--transition);
         }
         
         .container {
@@ -53,7 +41,6 @@
             background-color: var(--secondary-color);
             color: white;
             border-radius: var(--border-radius);
-            position: relative;
         }
         
         header h1 {
@@ -71,29 +58,12 @@
             margin-right: 10px;
         }
         
-        .theme-toggle {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .theme-toggle:hover {
-            transform: scale(1.1);
-        }
-        
         .input-section {
-            background-color: var(--card-bg);
+            background-color: white;
             padding: 30px;
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
             margin-bottom: 30px;
-            transition: var(--transition);
         }
         
         .url-form {
@@ -114,9 +84,7 @@
             border: 2px solid #ddd;
             border-radius: var(--border-radius);
             font-size: 1rem;
-            transition: var(--transition);
-            background-color: var(--card-bg);
-            color: var(--text-color);
+            transition: border-color 0.3s;
         }
         
         .url-input:focus {
@@ -133,47 +101,15 @@
             cursor: pointer;
             font-size: 1rem;
             font-weight: bold;
-            transition: var(--transition);
+            transition: background-color 0.3s;
         }
         
         .submit-btn:hover {
             background-color: #cc0000;
-            transform: translateY(-2px);
-        }
-        
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 20px;
-        }
-        
-        .spinner {
-            border: 4px solid rgba(255, 0, 0, 0.1);
-            border-left-color: var(--primary-color);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
         }
         
         .results-section {
             margin-top: 30px;
-        }
-        
-        .section-title {
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-            color: var(--text-color);
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
         
         .thumbnails-container {
@@ -184,11 +120,11 @@
         }
         
         .thumbnail-card {
-            background-color: var(--card-bg);
+            background-color: white;
             border-radius: var(--border-radius);
             overflow: hidden;
             box-shadow: var(--box-shadow);
-            transition: var(--transition);
+            transition: transform 0.3s;
         }
         
         .thumbnail-card:hover {
@@ -199,8 +135,7 @@
             width: 100%;
             height: 180px;
             object-fit: cover;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            cursor: pointer;
+            border-bottom: 1px solid #eee;
         }
         
         .thumbnail-info {
@@ -216,61 +151,31 @@
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
-            color: var(--text-color);
-        }
-        
-        .quality-selector {
-            margin-bottom: 15px;
-        }
-        
-        .quality-selector select {
-            width: 100%;
-            padding: 8px;
-            border-radius: var(--border-radius);
-            border: 1px solid #ddd;
-            background-color: var(--card-bg);
-            color: var(--text-color);
         }
         
         .thumbnail-actions {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
         }
         
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .download-btn, .preview-btn, .copy-btn {
-            padding: 8px 12px;
+        .download-btn {
+            padding: 8px 15px;
             background-color: var(--primary-color);
             color: white;
             border: none;
             border-radius: var(--border-radius);
             cursor: pointer;
             font-size: 0.9rem;
-            transition: var(--transition);
+            transition: background-color 0.3s;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 5px;
         }
         
-        .preview-btn {
-            background-color: var(--secondary-color);
-        }
-        
-        .copy-btn {
-            background-color: #4285f4;
-        }
-        
-        .download-btn:hover, .preview-btn:hover, .copy-btn:hover {
-            transform: translateY(-2px);
-            opacity: 0.9;
+        .download-btn:hover {
+            background-color: #cc0000;
         }
         
         .select-thumbnail {
@@ -279,215 +184,35 @@
             cursor: pointer;
         }
         
-        .batch-actions {
+        .batch-download {
             margin-top: 30px;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
+            text-align: center;
         }
         
-        .batch-quality {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .batch-quality select {
-            padding: 8px;
-            border-radius: var(--border-radius);
-            border: 1px solid #ddd;
-            background-color: var(--card-bg);
-            color: var(--text-color);
-        }
-        
-        .batch-download-btn, .clear-selection-btn {
+        .batch-download-btn {
             padding: 12px 25px;
+            background-color: var(--secondary-color);
             color: white;
             border: none;
             border-radius: var(--border-radius);
             cursor: pointer;
             font-size: 1rem;
-            transition: var(--transition);
+            transition: background-color 0.3s;
             display: inline-flex;
             align-items: center;
             gap: 8px;
         }
         
-        .batch-download-btn {
-            background-color: var(--secondary-color);
-        }
-        
-        .clear-selection-btn {
-            background-color: #666;
-        }
-        
-        .batch-download-btn:hover, .clear-selection-btn:hover {
-            transform: translateY(-2px);
+        .batch-download-btn:hover {
+            background-color: #1a1a1a;
         }
         
         .no-results {
             text-align: center;
             padding: 30px;
-            background-color: var(--card-bg);
+            background-color: white;
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
-            color: var(--text-color);
-        }
-        
-        .error-message {
-            color: var(--primary-color);
-            font-weight: bold;
-            text-align: center;
-            margin-top: 10px;
-        }
-        
-        /* Modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            overflow: auto;
-        }
-        
-        .modal-content {
-            position: relative;
-            background-color: var(--card-bg);
-            margin: 5% auto;
-            padding: 20px;
-            border-radius: var(--border-radius);
-            max-width: 80%;
-            max-height: 80%;
-            overflow: auto;
-            box-shadow: var(--box-shadow);
-        }
-        
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 28px;
-            font-weight: bold;
-            color: var(--text-color);
-            cursor: pointer;
-        }
-        
-        .modal-image {
-            width: 100%;
-            max-height: 70vh;
-            object-fit: contain;
-            margin-bottom: 15px;
-        }
-        
-        .modal-title {
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-            color: var(--text-color);
-        }
-        
-        .modal-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .modal-quality {
-            font-size: 0.9rem;
-            color: #666;
-        }
-        
-        .modal-actions {
-            display: flex;
-            gap: 10px;
-        }
-        
-        /* Recent searches section */
-        .recent-searches {
-            background-color: var(--card-bg);
-            padding: 20px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            margin-bottom: 30px;
-            transition: var(--transition);
-        }
-        
-        .recent-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .recent-item:last-child {
-            border-bottom: none;
-        }
-        
-        .recent-item:hover {
-            background-color: rgba(0, 0, 0, 0.05);
-        }
-        
-        .recent-thumbnail {
-            width: 80px;
-            height: 45px;
-            object-fit: cover;
-            border-radius: 4px;
-        }
-        
-        .recent-title {
-            flex: 1;
-            font-size: 0.9rem;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            color: var(--text-color);
-        }
-        
-        .tooltip {
-            position: relative;
-            display: inline-block;
-        }
-        
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 140px;
-            background-color: #555;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 5px;
-            position: absolute;
-            z-index: 1;
-            bottom: 150%;
-            left: 50%;
-            margin-left: -75px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        
-        .tooltip .tooltiptext::after {
-            content: "";
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -5px;
-            border-width: 5px;
-            border-style: solid;
-            border-color: #555 transparent transparent transparent;
-        }
-        
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
         }
         
         footer {
@@ -498,27 +223,36 @@
             font-size: 0.9rem;
         }
         
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .modal-content {
-                max-width: 95%;
-                margin: 10% auto;
-            }
-            
-            .batch-actions {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .thumbnail-actions {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .action-buttons {
-                width: 100%;
-                justify-content: space-between;
-            }
+        .error-message {
+            color: var(--primary-color);
+            font-weight: bold;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: var(--primary-color);
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -527,14 +261,11 @@
         <header>
             <h1><i class="fab fa-youtube youtube-icon"></i>YouTube Thumbnail Downloader</h1>
             <p>Download high-quality thumbnails from any YouTube video</p>
-            <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-                <i class="fas fa-moon"></i>
-            </button>
         </header>
         
         <main>
             <section class="input-section">
-                <form class="url-form" method="POST" action="/" id="urlForm">
+                <form class="url-form" method="POST" action="/" id="download-form">
                     <input 
                         type="text" 
                         name="video_url" 
@@ -546,93 +277,34 @@
                         <i class="fas fa-search"></i> Get Thumbnail
                     </button>
                 </form>
-            </section>
-            
-            <div class="loading" id="loadingIndicator">
-                <div class="spinner"></div>
-                <p>Fetching thumbnail information...</p>
-            </div>
-            
-            {% if recent_searches and not thumbnails %}
-            <section class="recent-searches">
-                <h2 class="section-title">Recent Searches</h2>
-                <div class="recent-list">
-                    {% for search in recent_searches %}
-                    <div class="recent-item" data-url="{{ search.url }}">
-                        <img src="https://img.youtube.com/vi/{{ search.id }}/default.jpg" alt="{{ search.title }}" class="recent-thumbnail">
-                        <div class="recent-title">{{ search.title }}</div>
-                        <button class="preview-btn" data-id="{{ search.id }}" data-quality="maxres">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                    {% endfor %}
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Fetching thumbnail...</p>
                 </div>
             </section>
-            {% endif %}
             
             <section class="results-section">
-                {% if thumbnails %}
-                    <h2 class="section-title">Results</h2>
+                {% if thumbnails and thumbnails|length > 0 %}
                     <form id="batch-form" method="POST" action="/download_all">
                         <div class="thumbnails-container">
                             {% for thumbnail in thumbnails %}
                                 <div class="thumbnail-card">
-                                    {% if thumbnail.qualities %}
-                                        {% set default_quality = 'maxres' if 'maxres' in thumbnail.qualities else list(thumbnail.qualities.keys())[0] if thumbnail.qualities else None %}
-                                        {% if default_quality %}
-                                            <img 
-                                                src="{{ thumbnail.qualities[default_quality] }}" 
-                                                alt="{{ thumbnail.title }}" 
-                                                class="thumbnail-img" 
-                                                data-id="{{ thumbnail.id }}"
-                                                data-quality="{{ default_quality }}"
-                                            >
-                                            <div class="thumbnail-info">
-                                                <h3 class="thumbnail-title">{{ thumbnail.title }}</h3>
-                                                
-                                                <div class="quality-selector">
-                                                    <select class="quality-select" data-id="{{ thumbnail.id }}">
-                                                        {% for quality, url in thumbnail.qualities.items() %}
-                                                            <option value="{{ quality }}" {% if quality == default_quality %}selected{% endif %}>
-                                                                {{ qualities[quality] }}
-                                                            </option>
-                                                        {% endfor %}
-                                                    </select>
-                                                </div>
-                                                
-                                                <div class="thumbnail-actions">
-                                                    <div class="action-buttons">
-                                                        <a href="/download/{{ thumbnail.id }}/{{ default_quality }}" 
-                                                           class="download-btn" 
-                                                           data-id="{{ thumbnail.id }}">
-                                                            <i class="fas fa-download"></i> Download
-                                                        </a>
-                                                        <button type="button" 
-                                                                class="preview-btn" 
-                                                                data-id="{{ thumbnail.id }}" 
-                                                                data-quality="{{ default_quality }}">
-                                                            <i class="fas fa-eye"></i> Preview
-                                                        </button>
-                                                        <button type="button" 
-                                                                class="copy-btn" 
-                                                                data-url="{{ thumbnail.qualities[default_quality] }}">
-                                                            <i class="fas fa-copy"></i> Copy URL
-                                                        </button>
-                                                    </div>
-                                                    <input 
-                                                        type="checkbox" 
-                                                        name="video_ids[]" 
-                                                        value="{{ thumbnail.id }}" 
-                                                        class="select-thumbnail"
-                                                        id="check-{{ thumbnail.id }}"
-                                                    >
-                                                </div>
+                                    {% if thumbnail.url %}
+                                        <img src="{{ thumbnail.url }}" alt="{{ thumbnail.title }}" class="thumbnail-img">
+                                        <div class="thumbnail-info">
+                                            <h3 class="thumbnail-title">{{ thumbnail.title }}</h3>
+                                            <div class="thumbnail-actions">
+                                                <a href="/download/{{ thumbnail.id }}" class="download-btn">
+                                                    <i class="fas fa-download"></i> Download
+                                                </a>
+                                                <input 
+                                                    type="checkbox" 
+                                                    name="video_ids[]" 
+                                                    value="{{ thumbnail.id }}" 
+                                                    class="select-thumbnail"
+                                                >
                                             </div>
-                                        {% else %}
-                                            <div class="thumbnail-info">
-                                                <p class="error-message">No thumbnails available for this video</p>
-                                            </div>
-                                        {% endif %}
+                                        </div>
                                     {% else %}
                                         <div class="thumbnail-info">
                                             <p class="error-message">{{ thumbnail.title }}</p>
@@ -642,21 +314,10 @@
                             {% endfor %}
                         </div>
                         
-                        {% if thumbnails|length > 0 and thumbnails[0].qualities %}
-                            <div class="batch-actions">
-                                <div class="batch-quality">
-                                    <label for="batch-quality-select">Batch download quality:</label>
-                                    <select name="quality" id="batch-quality-select">
-                                        {% for quality_key, quality_name in qualities.items() %}
-                                            <option value="{{ quality_key }}">{{ quality_name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <button type="submit" class="batch-download-btn" disabled>
-                                    <i class="fas fa-file-archive"></i> Download Selected
-                                </button>
-                                <button type="button" class="clear-selection-btn" id="clearSelection">
-                                    <i class="fas fa-times-circle"></i> Clear Selection
+                        {% if thumbnails|length > 1 %}
+                            <div class="batch-download">
+                                <button type="submit" class="batch-download-btn">
+                                    <i class="fas fa-file-archive"></i> Download Selected Thumbnails
                                 </button>
                             </div>
                         {% endif %}
@@ -665,213 +326,51 @@
             </section>
         </main>
         
-        <!-- Preview Modal -->
-        <div id="previewModal" class="modal">
-            <div class="modal-content">
-                <span class="close-modal">&times;</span>
-                <img src="/placeholder.svg" alt="Thumbnail Preview" class="modal-image" id="modalImage">
-                <h3 class="modal-title" id="modalTitle"></h3>
-                <div class="modal-info">
-                    <span class="modal-quality" id="modalQuality"></span>
-                    <div class="modal-actions">
-                        <a href="#" class="download-btn" id="modalDownload">
-                            <i class="fas fa-download"></i> Download
-                        </a>
-                        <button class="copy-btn" id="modalCopy">
-                            <i class="fas fa-copy"></i> Copy URL
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
         <footer>
             <p>© 2023 YouTube Thumbnail Downloader | Download high-quality thumbnails from YouTube videos</p>
         </footer>
     </div>
     
     <script>
+        // Show loading indicator when form is submitted
         document.addEventListener('DOMContentLoaded', function() {
-            // Theme toggle functionality
-            const themeToggle = document.getElementById('themeToggle');
-            const themeIcon = themeToggle.querySelector('i');
+            const form = document.getElementById('download-form');
+            const loading = document.getElementById('loading');
             
-            // Check for saved theme preference or use device preference
-            const savedTheme = localStorage.getItem('theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            
-            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                themeIcon.classList.replace('fa-moon', 'fa-sun');
-            }
-            
-            themeToggle.addEventListener('click', function() {
-                const currentTheme = document.documentElement.getAttribute('data-theme');
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                
-                document.documentElement.setAttribute('data-theme', newTheme);
-                localStorage.setItem('theme', newTheme);
-                
-                if (newTheme === 'dark') {
-                    themeIcon.classList.replace('fa-moon', 'fa-sun');
-                } else {
-                    themeIcon.classList.replace('fa-sun', 'fa-moon');
-                }
-            });
-            
-            // Loading indicator
-            const urlForm = document.getElementById('urlForm');
-            const loadingIndicator = document.getElementById('loadingIndicator');
-            
-            if (urlForm) {
-                urlForm.addEventListener('submit', function() {
-                    loadingIndicator.style.display = 'block';
+            if (form && loading) {
+                form.addEventListener('submit', function() {
+                    loading.classList.add('active');
                 });
             }
             
-            // Quality selector functionality
-            const qualitySelects = document.querySelectorAll('.quality-select');
-            qualitySelects.forEach(select => {
-                select.addEventListener('change', function() {
-                    const videoId = this.getAttribute('data-id');
-                    const quality = this.value;
-                    const thumbnailImg = document.querySelector(`.thumbnail-img[data-id="${videoId}"]`);
-                    const downloadBtn = document.querySelector(`.download-btn[data-id="${videoId}"]`);
-                    const previewBtn = document.querySelector(`.preview-btn[data-id="${videoId}"]`);
-                    const copyBtn = document.querySelector(`.thumbnail-card:has(.quality-select[data-id="${videoId}"]) .copy-btn`);
-                    
-                    // Update image source
-                    thumbnailImg.src = `https://img.youtube.com/vi/${videoId}/${quality}.jpg`;
-                    thumbnailImg.setAttribute('data-quality', quality);
-                    
-                    // Update download link
-                    downloadBtn.href = `/download/${videoId}/${quality}`;
-                    
-                    // Update preview button
-                    previewBtn.setAttribute('data-quality', quality);
-                    
-                    // Update copy button
-                    copyBtn.setAttribute('data-url', `https://img.youtube.com/vi/${videoId}/${quality}.jpg`);
-                });
-            });
+            // Enable/disable batch download button based on checkbox selection
+            const batchForm = document.getElementById('batch-form');
+            const checkboxes = document.querySelectorAll('input[name="video_ids[]"]');
+            const batchButton = document.querySelector('.batch-download-btn');
             
-            // Preview functionality
-            const modal = document.getElementById('previewModal');
-            const modalImage = document.getElementById('modalImage');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalQuality = document.getElementById('modalQuality');
-            const modalDownload = document.getElementById('modalDownload');
-            const modalCopy = document.getElementById('modalCopy');
-            const closeModal = document.querySelector('.close-modal');
-            
-            // Open modal when preview button is clicked
-            document.querySelectorAll('.preview-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const videoId = this.getAttribute('data-id');
-                    const quality = this.getAttribute('data-quality');
-                    
-                    fetch(`/preview/${videoId}/${quality}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            modalImage.src = data.url;
-                            modalTitle.textContent = data.title;
-                            modalQuality.textContent = data.quality_name;
-                            modalDownload.href = `/download/${videoId}/${quality}`;
-                            modalCopy.setAttribute('data-url', data.url);
-                            modal.style.display = 'block';
-                        })
-                        .catch(error => {
-                            console.error('Error fetching preview:', error);
-                        });
-                });
-            });
-            
-            // Close modal
-            closeModal.addEventListener('click', function() {
-                modal.style.display = 'none';
-            });
-            
-            window.addEventListener('click', function(event) {
-                if (event.target === modal) {
-                    modal.style.display = 'none';
-                }
-            });
-            
-            // Copy URL functionality
-            document.querySelectorAll('.copy-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const url = this.getAttribute('data-url');
-                    navigator.clipboard.writeText(url).then(() => {
-                        // Show tooltip
-                        const tooltip = document.createElement('span');
-                        tooltip.className = 'tooltiptext';
-                        tooltip.textContent = 'URL copied!';
-                        this.classList.add('tooltip');
-                        this.appendChild(tooltip);
-                        
-                        // Remove tooltip after 2 seconds
-                        setTimeout(() => {
-                            this.removeChild(tooltip);
-                            this.classList.remove('tooltip');
-                        }, 2000);
-                    });
-                });
-            });
-            
-            // Modal copy button
-            modalCopy.addEventListener('click', function() {
-                const url = this.getAttribute('data-url');
-                navigator.clipboard.writeText(url).then(() => {
-                    const originalText = this.innerHTML;
-                    this.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                    
-                    setTimeout(() => {
-                        this.innerHTML = originalText;
-                    }, 2000);
-                });
-            });
-            
-            // Batch download functionality
-            const checkboxes = document.querySelectorAll('.select-thumbnail');
-            const batchDownloadBtn = document.querySelector('.batch-download-btn');
-            const clearSelectionBtn = document.getElementById('clearSelection');
-            
-            if (checkboxes.length > 0 && batchDownloadBtn) {
-                // Update batch download button state
-                function updateBatchButtonState() {
-                    const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
-                    batchDownloadBtn.disabled = !anyChecked;
-                    batchDownloadBtn.style.opacity = anyChecked ? '1' : '0.6';
-                    batchDownloadBtn.style.cursor = anyChecked ? 'pointer' : 'not-allowed';
+            if (batchButton && checkboxes.length > 0) {
+                // Initially disable the button if no checkboxes are checked
+                let anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+                if (batchButton) {
+                    batchButton.disabled = !anyChecked;
+                    if (!anyChecked) {
+                        batchButton.style.opacity = '0.6';
+                        batchButton.style.cursor = 'not-allowed';
+                    }
                 }
                 
-                // Add event listeners to checkboxes
+                // Add event listeners to all checkboxes
                 checkboxes.forEach(checkbox => {
-                    checkbox.addEventListener('change', updateBatchButtonState);
-                });
-                
-                // Clear selection button
-                if (clearSelectionBtn) {
-                    clearSelectionBtn.addEventListener('click', function() {
-                        checkboxes.forEach(checkbox => {
-                            checkbox.checked = false;
-                        });
-                        updateBatchButtonState();
+                    checkbox.addEventListener('change', function() {
+                        let checked = Array.from(checkboxes).some(cb => cb.checked);
+                        if (batchButton) {
+                            batchButton.disabled = !checked;
+                            batchButton.style.opacity = checked ? '1' : '0.6';
+                            batchButton.style.cursor = checked ? 'pointer' : 'not-allowed';
+                        }
                     });
-                }
-                
-                // Initial state
-                updateBatchButtonState();
-            }
-            
-            // Recent searches functionality
-            const recentItems = document.querySelectorAll('.recent-item');
-            recentItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    const url = this.getAttribute('data-url');
-                    document.querySelector('.url-input').value = url;
                 });
-            });
+            }
         });
     </script>
 </body>
