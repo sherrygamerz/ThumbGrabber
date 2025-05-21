@@ -1,2 +1,24 @@
-Flask
-requests
+# Core Flask dependencies
+Flask==2.3.3
+Werkzeug==2.3.7
+Jinja2==3.1.2
+itsdangerous==2.1.2
+click==8.1.7
+
+# HTTP requests
+requests==2.31.0
+urllib3==2.0.4
+certifi==2023.7.22
+charset-normalizer==3.2.0
+idna==3.4
+
+# Video processing
+yt-dlp==2023.7.6
+ffmpeg-python==0.2.0
+
+# Image processing
+Pillow==10.0.0
+
+# Utilities
+python-dotenv==1.0.0
+gunicorn==21.2.0
