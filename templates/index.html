@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light-mode">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,8 +11,21 @@
             --secondary-color: #282828;
             --text-color: #333;
             --light-bg: #f9f9f9;
+            --card-bg: #ffffff;
+            --border-color: #eee;
             --border-radius: 8px;
             --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.3s;
+        }
+        
+        .dark-mode {
+            --primary-color: #ff4444;
+            --secondary-color: #1a1a1a;
+            --text-color: #f0f0f0;
+            --light-bg: #121212;
+            --card-bg: #1e1e1e;
+            --border-color: #333;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         }
         
         * {
@@ -26,6 +39,7 @@
             background-color: var(--light-bg);
             color: var(--text-color);
             line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
         }
         
         .container {
@@ -41,6 +55,8 @@
             background-color: var(--secondary-color);
             color: white;
             border-radius: var(--border-radius);
+            position: relative;
+            transition: background-color var(--transition-speed);
         }
         
         header h1 {
@@ -60,14 +76,32 @@
             color: var(--primary-color);
             margin-right: 10px;
             font-size: 2.5rem;
+            transition: color var(--transition-speed);
+        }
+        
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .theme-toggle:hover {
+            transform: rotate(30deg);
         }
         
         .input-section {
-            background-color: white;
+            background-color: var(--card-bg);
             padding: 30px;
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
             margin-bottom: 30px;
+            transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
         }
         
         .url-form {
@@ -79,21 +113,55 @@
         @media (min-width: 768px) {
             .url-form {
                 flex-direction: row;
+                align-items: flex-start;
             }
         }
         
-        .url-input {
+        .url-input-container {
             flex: 1;
+            position: relative;
+        }
+        
+        .url-input {
+            width: 100%;
+            min-height: 100px;
             padding: 15px;
-            border: 2px solid #ddd;
+            border: 2px solid var(--border-color);
             border-radius: var(--border-radius);
             font-size: 1rem;
-            transition: border-color 0.3s;
+            transition: border-color var(--transition-speed);
+            resize: vertical;
+            background-color: var(--card-bg);
+            color: var(--text-color);
         }
         
         .url-input:focus {
             border-color: var(--primary-color);
             outline: none;
+        }
+        
+        .url-input-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+        }
+        
+        .clear-btn {
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 0;
+        }
+        
+        .clear-btn:hover {
+            color: var(--primary-color);
+        }
+        
+        .url-count {
+            font-size: 0.9rem;
+            color: #888;
         }
         
         .submit-btn {
@@ -105,11 +173,12 @@
             cursor: pointer;
             font-size: 1rem;
             font-weight: bold;
-            transition: background-color 0.3s;
+            transition: background-color var(--transition-speed);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            min-width: 180px;
         }
         
         .submit-btn:hover {
@@ -128,11 +197,11 @@
         }
         
         .thumbnail-card {
-            background-color: white;
+            background-color: var(--card-bg);
             border-radius: var(--border-radius);
             overflow: hidden;
             box-shadow: var(--box-shadow);
-            transition: transform 0.3s;
+            transition: transform var(--transition-speed), background-color var(--transition-speed), box-shadow var(--transition-speed);
             position: relative;
         }
         
@@ -148,8 +217,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid var(--border-color);
             overflow: hidden;
+            transition: background-color var(--transition-speed);
+        }
+        
+        .dark-mode .thumbnail-img-container {
+            background-color: #2a2a2a;
         }
         
         .thumbnail-img {
@@ -206,7 +280,7 @@
             border-radius: var(--border-radius);
             cursor: pointer;
             font-size: 0.9rem;
-            transition: background-color 0.3s;
+            transition: background-color var(--transition-speed);
             text-decoration: none;
             display: inline-flex;
             align-items: center;
@@ -228,10 +302,19 @@
             background-color: #3e8e41;
         }
         
+        .preview-btn {
+            background-color: #2196F3;
+        }
+        
+        .preview-btn:hover {
+            background-color: #0b7dda;
+        }
+        
         .select-thumbnail {
             width: 20px;
             height: 20px;
             cursor: pointer;
+            accent-color: var(--primary-color);
         }
         
         .batch-download {
@@ -247,7 +330,7 @@
             border-radius: var(--border-radius);
             cursor: pointer;
             font-size: 1rem;
-            transition: background-color 0.3s;
+            transition: background-color var(--transition-speed);
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -260,9 +343,10 @@
         .no-results {
             text-align: center;
             padding: 30px;
-            background-color: white;
+            background-color: var(--card-bg);
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
+            transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
         }
         
         footer {
@@ -271,6 +355,7 @@
             padding: 20px;
             color: #666;
             font-size: 0.9rem;
+            transition: color var(--transition-speed);
         }
         
         .error-message {
@@ -298,6 +383,11 @@
             border-left-color: var(--primary-color);
             animation: spin 1s linear infinite;
             margin: 0 auto;
+        }
+        
+        .dark-mode .spinner {
+            border-color: rgba(255, 255, 255, 0.1);
+            border-left-color: var(--primary-color);
         }
         
         @keyframes spin {
@@ -332,11 +422,174 @@
                 margin-top: 10px;
             }
         }
+        
+        /* Quality options section */
+        .quality-options {
+            margin-top: 15px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+            transition: border-color var(--transition-speed);
+        }
+        
+        .quality-options h4 {
+            margin-bottom: 10px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .quality-options h4 i {
+            margin-right: 5px;
+            transition: transform 0.3s;
+        }
+        
+        .quality-options h4.collapsed i {
+            transform: rotate(-90deg);
+        }
+        
+        .quality-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .quality-option {
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            transition: transform 0.2s, border-color var(--transition-speed);
+        }
+        
+        .quality-option:hover {
+            transform: translateY(-3px);
+        }
+        
+        .quality-img {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+        }
+        
+        .quality-info {
+            padding: 8px;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+        
+        .quality-download {
+            display: block;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            padding: 5px;
+            border-radius: 4px;
+            margin-top: 5px;
+            font-size: 0.8rem;
+            transition: background-color var(--transition-speed);
+        }
+        
+        .quality-download:hover {
+            background-color: #cc0000;
+        }
+        
+        /* Preview modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transition: background-color var(--transition-speed);
+        }
+        
+        .modal-header {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: border-color var(--transition-speed);
+        }
+        
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+            transition: color var(--transition-speed);
+        }
+        
+        .modal-close:hover {
+            color: var(--primary-color);
+        }
+        
+        .modal-body {
+            padding: 15px;
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        /* Collapsible sections */
+        .collapsible-content {
+            max-height: 1000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .collapsible-content.collapsed {
+            max-height: 0;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
             <h1><i class="fab fa-youtube youtube-icon"></i>YouTube Thumbnail Downloader</h1>
             <p>Download high-quality thumbnails from any YouTube video</p>
         </header>
@@ -344,20 +597,27 @@
         <main>
             <section class="input-section">
                 <form class="url-form" method="POST" action="/" id="download-form">
-                    <input 
-                        type="text" 
-                        name="video_url" 
-                        class="url-input" 
-                        placeholder="Paste YouTube video URL here (regular or shorts)" 
-                        required
-                    >
+                    <div class="url-input-container">
+                        <textarea 
+                            name="video_url" 
+                            class="url-input" 
+                            placeholder="Paste YouTube video URL(s) here (one per line)" 
+                            required
+                        ></textarea>
+                        <div class="url-input-actions">
+                            <button type="button" class="clear-btn" onclick="clearInput()">
+                                <i class="fas fa-times"></i> Clear
+                            </button>
+                            <div class="url-count" id="urlCount">0 URLs</div>
+                        </div>
+                    </div>
                     <button type="submit" class="submit-btn">
-                        <i class="fas fa-search"></i> Get Thumbnail
+                        <i class="fas fa-search"></i> Get Thumbnails
                     </button>
                 </form>
                 <div class="loading" id="loading">
                     <div class="spinner"></div>
-                    <p>Fetching thumbnail...</p>
+                    <p>Fetching thumbnails...</p>
                 </div>
             </section>
             
@@ -386,10 +646,15 @@
                                                     <i class="fas fa-download"></i> Download
                                                 </a>
                                                 
-                                                <!-- NEW EXTRACT FRAME BUTTON -->
+                                                <!-- Extract Frame Button -->
                                                 <a href="/extract-frame/{{ thumbnail.id }}" class="download-btn extract-btn">
                                                     <i class="fas fa-film"></i> Extract Frame
                                                 </a>
+                                                
+                                                <!-- Preview Button -->
+                                                <button type="button" class="download-btn preview-btn" onclick="openPreviewModal('{{ thumbnail.id }}', '{{ thumbnail.title|replace("'", "\\'") }}')">
+                                                    <i class="fas fa-play"></i> Preview
+                                                </button>
                                                 
                                                 <!-- Checkbox for batch download -->
                                                 <input 
@@ -404,6 +669,54 @@
                                                     value="{{ thumbnail.quality }}"
                                                 >
                                             </div>
+                                            
+                                            <!-- Quality Options Section -->
+                                            {% if thumbnail.standard_thumbnails %}
+                                                <div class="quality-options">
+                                                    <h4 onclick="toggleCollapse(this.nextElementSibling, this)">
+                                                        <i class="fas fa-chevron-down"></i> Available Quality Options
+                                                    </h4>
+                                                    <div class="collapsible-content">
+                                                        <div class="quality-grid">
+                                                            {% for quality in thumbnail.standard_thumbnails %}
+                                                                <div class="quality-option">
+                                                                    <img src="{{ quality.url }}" alt="{{ quality.label }}" class="quality-img">
+                                                                    <div class="quality-info">
+                                                                        <div>{{ quality.label }}</div>
+                                                                        <a href="/download/{{ thumbnail.id }}/{{ quality.quality }}" class="quality-download">
+                                                                            <i class="fas fa-download"></i> Download
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            {% endfor %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                            
+                                            <!-- Frame Thumbnails Section -->
+                                            {% if thumbnail.frame_thumbnails %}
+                                                <div class="quality-options">
+                                                    <h4 onclick="toggleCollapse(this.nextElementSibling, this)">
+                                                        <i class="fas fa-chevron-down"></i> Video Timeline Frames
+                                                    </h4>
+                                                    <div class="collapsible-content">
+                                                        <div class="quality-grid">
+                                                            {% for frame in thumbnail.frame_thumbnails %}
+                                                                <div class="quality-option">
+                                                                    <img src="{{ frame.url }}" alt="{{ frame.position }}" class="quality-img">
+                                                                    <div class="quality-info">
+                                                                        <div>{{ frame.position }}</div>
+                                                                        <a href="{{ frame.url }}" download="frame_{{ thumbnail.id }}_{{ frame.index }}.jpg" class="quality-download">
+                                                                            <i class="fas fa-download"></i> Download
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            {% endfor %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
                                         </div>
                                     {% else %}
                                         <div class="thumbnail-img-container">
@@ -437,9 +750,55 @@
         </footer>
     </div>
     
+    <!-- Preview Modal -->
+    <div class="modal" id="previewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">Video Preview</div>
+                <button class="modal-close" onclick="closePreviewModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="video-container" id="videoContainer"></div>
+            </div>
+        </div>
+    </div>
+    
     <script>
-        // Show loading indicator when form is submitted
+        // Theme toggle functionality
         document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const htmlElement = document.documentElement;
+            const themeIcon = themeToggle.querySelector('i');
+            
+            // Check for saved theme preference or use preferred color scheme
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                htmlElement.classList.remove('light-mode');
+                htmlElement.classList.add('dark-mode');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            }
+            
+            // Toggle theme when button is clicked
+            themeToggle.addEventListener('click', function() {
+                if (htmlElement.classList.contains('dark-mode')) {
+                    htmlElement.classList.remove('dark-mode');
+                    htmlElement.classList.add('light-mode');
+                    themeIcon.classList.remove('fa-sun');
+                    themeIcon.classList.add('fa-moon');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    htmlElement.classList.remove('light-mode');
+                    htmlElement.classList.add('dark-mode');
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                    localStorage.setItem('theme', 'dark');
+                }
+            });
+            
+            // Show loading indicator when form is submitted
             const form = document.getElementById('download-form');
             const loading = document.getElementById('loading');
             
@@ -476,6 +835,91 @@
                         }
                     });
                 });
+            }
+        });
+        
+        // Clear input function
+        function clearInput() {
+            const textarea = document.querySelector('.url-input');
+            textarea.value = '';
+            updateUrlCount();
+        }
+        
+        // Update URL count function
+        function updateUrlCount() {
+            const textarea = document.querySelector('.url-input');
+            const urlCount = document.getElementById('urlCount');
+            
+            const urls = textarea.value.split('\n').filter(url => url.trim() !== '');
+            const count = urls.length;
+            
+            urlCount.textContent = count === 1 ? '1 URL' : `${count} URLs`;
+        }
+        
+        // Initialize URL count on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const textarea = document.querySelector('.url-input');
+            if (textarea) {
+                textarea.addEventListener('input', updateUrlCount);
+                updateUrlCount();
+            }
+        });
+        
+        // Toggle collapse function for quality options
+        function toggleCollapse(element, header) {
+            if (element.classList.contains('collapsed')) {
+                element.classList.remove('collapsed');
+                header.classList.remove('collapsed');
+            } else {
+                element.classList.add('collapsed');
+                header.classList.add('collapsed');
+            }
+        }
+        
+        // Preview modal functions
+        function openPreviewModal(videoId, title) {
+            const modal = document.getElementById('previewModal');
+            const videoContainer = document.getElementById('videoContainer');
+            const modalTitle = document.getElementById('modalTitle');
+            
+            // Set the title
+            modalTitle.textContent = title;
+            
+            // Create the iframe
+            videoContainer.innerHTML = `
+                <iframe 
+                    src="https://www.youtube.com/embed/${videoId}" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen
+                ></iframe>
+            `;
+            
+            // Show the modal
+            modal.classList.add('active');
+            
+            // Prevent scrolling on the body
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closePreviewModal() {
+            const modal = document.getElementById('previewModal');
+            const videoContainer = document.getElementById('videoContainer');
+            
+            // Clear the iframe to stop the video
+            videoContainer.innerHTML = '';
+            
+            // Hide the modal
+            modal.classList.remove('active');
+            
+            // Re-enable scrolling on the body
+            document.body.style.overflow = '';
+        }
+        
+        // Close modal when clicking outside the content
+        document.getElementById('previewModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closePreviewModal();
             }
         });
     </script>
